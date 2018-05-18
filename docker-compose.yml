@@ -1,8 +1,0 @@
-version: '3'
-
-services:
-  dice-roller:
-    build: .
-    image: dice-roller
-    ports:
-      - "5000:80"
