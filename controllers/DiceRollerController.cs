@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
+using DiceRoller.Domain;
+using System.Linq;
 
 namespace DiceRoller.Controllers
 {
@@ -8,47 +10,44 @@ namespace DiceRoller.Controllers
   public class DiceRollerController : Controller
   {
     [HttpGet]
-    public IActionResult Roll(int sides, int count = 1, int constant = 0, int rolls = 1)
+    public IActionResult Roll(int sides, int count = 1, int constant = 0, int attempts = 1, bool verbose = false)
     {
-      if (!inputValid(sides, count, constant, rolls)) {
-        return BadRequest();
+      var domainResponse = Roller.Roll(count, sides, constant, attempts);
+
+      if (!domainResponse.Valid) {
+        return BadRequest(domainResponse.Message);
       }
 
-      var retArray = new List<int>();
-      var rand = new Random();
-
-      for (int i = 0; i < rolls; i++) {
-        retArray.Add(calculateRoll(rand, sides, count, constant));
-      }
-
-      if (rolls == 1) {
-        return Ok(retArray[0]);
-      } else {
-        return Ok(retArray);
-      }
-    }
-
-    private int calculateRoll(Random rand, int sides, int count, int constant)
-    {
-        var total = 0;
-        for (var j = 0; j < count; j++)
-        {
-          total += rand.Next(1, sides + 1);
+      if (attempts == 1)
+      {
+        if (verbose) {
+          return Ok(VerboseResponse(domainResponse.Rolls.First()));
+        } else {
+          return Ok(domainResponse.Rolls.First().Total);
         }
-        total += constant;
-        return total;
+      } else {
+        if (verbose) {
+          var webResponses = domainResponse.Rolls.Select(roll => VerboseResponse(roll));
+          return Ok(webResponses);
+        } else {
+          return Ok(domainResponse.Rolls.Select(roll => roll.Total));
+        }
+      }
     }
 
-    private bool inputValid(int sides, int count, int constant, int rolls)
+    private DiceRollerWebResponse VerboseResponse(Roll roll)
     {
-      return sides > 0
-        && sides <= 100
-        && count > 0
-        && count <= 100
-        && constant >= 0
-        && constant <= 1000000
-        && rolls > 0
-        && rolls <= 100;
+      return new DiceRollerWebResponse
+      {
+        Total = roll.Total,
+        Rolls = roll.Values
+      };
     }
+  }
+
+  public class DiceRollerWebResponse
+  {
+    public int Total;
+    public IEnumerable<int> Rolls;
   }
 }
