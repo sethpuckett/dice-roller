@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -16,7 +17,7 @@ namespace DiceRoller.Domain
 
     public int Total
     {
-      get => this.Values.Sum() + this.Constant;
+      get => Math.Max(0, this.Values.Sum() + this.Constant);
     }
   }
 }

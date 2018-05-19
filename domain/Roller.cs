@@ -32,16 +32,16 @@ namespace DiceRoller.Domain
         return new Roll(rolls, constant);
     }
 
-    private static bool InputValid(int count, int sides, int constant, int rolls)
+    private static bool InputValid(int count, int sides, int constant, int attempts)
     {
       return
         new List<int> {4, 6, 8, 10, 12, 20, 100}.Contains(sides)
         && count > 0
         && count <= 100
-        && constant >= 0
+        && constant >= -1000000
         && constant <= 1000000
-        && rolls > 0
-        && rolls <= 100;
+        && attempts > 0
+        && attempts <= 100;
     }
   }
 }
