@@ -3,10 +3,10 @@ using System.Collections.Generic;
 
 namespace DiceRoller.Domain
 {
-  public static class Roller
+  public class Roller : IRoller
   {
 
-    public static RollerDomainResponse Roll(int count, int sides, int constant = 0, int attempts = 1)
+    public RollerDomainResponse Roll(int count, int sides, int constant = 0, int attempts = 1)
     {
       if (!InputValid(count, sides, constant, attempts)) {
         return RollerDomainResponse.Invalid("Invalid dice parameters");

@@ -9,10 +9,17 @@ namespace DiceRoller.Controllers
   [Route("/dice")]
   public class DiceRollerController : Controller
   {
+    private readonly IRoller Roller;
+
+    public DiceRollerController(IRoller roller)
+    {
+      this.Roller = roller;
+    }
+
     [HttpGet]
     public IActionResult Roll(int sides, int count = 1, int constant = 0, int attempts = 1, bool verbose = false)
     {
-      var domainResponse = Roller.Roll(count, sides, constant, attempts);
+      var domainResponse = this.Roller.Roll(count, sides, constant, attempts);
 
       if (!domainResponse.Valid) {
         return BadRequest(domainResponse.Message);

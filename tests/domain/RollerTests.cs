@@ -8,11 +8,19 @@ namespace DiceRoller.Tests.Domain
   [TestFixture]
   public class DiceRollerTests
   {
+    private Roller classUnderTest;
+
+    [SetUp]
+    public void Setup()
+    {
+      classUnderTest = new Roller();
+    }
+
     public static readonly List<int> ValidSides = new List<int> { 4, 6, 8, 10, 12, 100 };
     [TestCaseSource("ValidSides")]
     public void Roll_GivenValidSides_ExpectValidResponse(int sides)
     {
-      var actual = Roller.Roll(1, sides);
+      var actual = classUnderTest.Roll(1, sides);
       Assert.That(actual.Valid, Is.True, "Roll should be valid");
     }
 
@@ -20,7 +28,7 @@ namespace DiceRoller.Tests.Domain
     [TestCaseSource("InvalidSides")]
     public void Roll_GivenInvalidSides_ExpectInvalidResponse(int sides)
     {
-      var actual = Roller.Roll(1, sides);
+      var actual = classUnderTest.Roll(1, sides);
       Assert.That(actual.Valid, Is.False, "Roll should be invalid");
     }
 
@@ -28,7 +36,7 @@ namespace DiceRoller.Tests.Domain
     [TestCaseSource("ValidCount")]
     public void Roll_GivenValidCount_ExpectValidResponse(int count)
     {
-      var actual = Roller.Roll(count, 6);
+      var actual = classUnderTest.Roll(count, 6);
       Assert.That(actual.Valid, Is.True, "Roll should be Valid");
     }
 
@@ -36,14 +44,14 @@ namespace DiceRoller.Tests.Domain
     [TestCaseSource("InvalidCount")]
     public void Roll_GivenInvalidCount_ExpectInvalidResponse(int count)
     {
-      var actual = Roller.Roll(count, 6);
+      var actual = classUnderTest.Roll(count, 6);
       Assert.That(actual.Valid, Is.False, "Roll should be invalid");
     }
 
     [Test]
     public void Roll_GivenConstant_ExpectConstantAddedToValue()
     {
-      var actual = Roller.Roll(1, 4, 100);
+      var actual = classUnderTest.Roll(1, 4, 100);
       Assert.That(actual.Rolls.First().Total, Is.GreaterThan(100), "Roll should be greater than constant value");
       Assert.That(actual.Rolls.First().Total, Is.LessThan(105), "Roll should be less than constant value plus max dice roll");
     }
@@ -52,7 +60,7 @@ namespace DiceRoller.Tests.Domain
 
     public void Roll_GivenNegativeConstant_ExpectConstantSubtractedFromValue()
     {
-      var actual = Roller.Roll(1, 4, -1);
+      var actual = classUnderTest.Roll(1, 4, -1);
       Assert.That(actual.Rolls.First().Total, Is.GreaterThan(-1), "Roll should be lowest possible value");
       Assert.That(actual.Rolls.First().Total, Is.LessThan(4), "Roll should be less than max dice roll minus constant");
     }
@@ -61,7 +69,7 @@ namespace DiceRoller.Tests.Domain
 
     public void Roll_GivenNegativeConstant_RollCannotBeLessThanZero()
     {
-      var actual = Roller.Roll(1, 4, -100);
+      var actual = classUnderTest.Roll(1, 4, -100);
       Assert.That(actual.Rolls.First().Total, Is.EqualTo(0), "Roll should always be 0 with high negative constant");
     }
 
@@ -69,7 +77,7 @@ namespace DiceRoller.Tests.Domain
 
     public void Roll_GivenMultipleAttempts_ExpectMultipleRollResponses()
     {
-      var actual = Roller.Roll(1, 4, 0, 2);
+      var actual = classUnderTest.Roll(1, 4, 0, 2);
       Assert.That(actual.Rolls.Count, Is.EqualTo(2), "Should contain 2 rolls");
     }
 
@@ -77,7 +85,7 @@ namespace DiceRoller.Tests.Domain
     [TestCaseSource("InvalidAttempts")]
     public void Roll_InvalidAttempts_ExpectInvalidResponse(int attempts)
     {
-      var actual = Roller.Roll(1, 4, 0, attempts);
+      var actual = classUnderTest.Roll(1, 4, 0, attempts);
       Assert.That(actual.Valid, Is.False, "Roll should be invalid with invalid attempts");
     }
   }
