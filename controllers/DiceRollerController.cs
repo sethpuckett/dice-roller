@@ -34,10 +34,10 @@ namespace DiceRoller.Controllers
         }
       } else {
         if (verbose) {
-          var webResponses = domainResponse.Rolls.Select(roll => VerboseResponse(roll));
+          var webResponses = domainResponse.Rolls.Select(roll => VerboseResponse(roll)).ToList();
           return Ok(webResponses);
         } else {
-          return Ok(domainResponse.Rolls.Select(roll => roll.Total));
+          return Ok(domainResponse.Rolls.Select(roll => roll.Total).ToList());
         }
       }
     }
